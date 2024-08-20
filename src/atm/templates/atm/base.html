@@ -1,0 +1,27 @@
+{% extends 'gentelella/base.html' %}
+{% load static %}
+{% block title %}BANK{%  endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'gentelella/css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'gentelella/css/custom.min.css' %}">
+<link rel="stylesheet" href="{% static 'gentelella/fonts/font-awesome.min.css' %}">
+{% endblock %}
+
+{% block content_block_wrap %}
+<div class="card">
+    <div class="card-body">
+
+        {% block content %}
+
+        {% endblock content %}
+
+    </div>
+</div>
+{% endblock content_block_wrap %}
+
+{% block javascript %}
+{{block.super}}
+<script src="{% static 'gentelella/js/jquery.min.js' %}"></script>
+<script src="{% static 'gentelella/js/bootstrap.min.js' %}"></script>
+
+{% endblock %}

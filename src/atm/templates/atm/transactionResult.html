@@ -1,0 +1,15 @@
+{% extends "atm/base.html" %}
+{% load static %}
+{% block title %} ATM {%  endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Resultado de la transacción</h2>
+    {% if error %}
+    <p class="alert alert-danger">{{ error }}</p>
+    {% else %}
+    <p class="alert alert-success">{{ message }}</p>
+    {% endif %}
+    <a href="{% url 'transaction' %}" class="btn btn-primary">Make another transaction</a>
+</div>
+{% endblock %}
