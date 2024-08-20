@@ -16,8 +16,12 @@
                         {% csrf_token %}
                         {{ form }}
 
-
-                        <button type="submit" class="btn btn-primary">Login</button>
+                        <div class="container text-center mt-3">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                            <a href="{% url 'index' %}" class="btn btn-success">
+                                <i class="fa fa-home"></i> Home Page
+                            </a>
+                        </div>
                     </form>
                 </div>
             </div>

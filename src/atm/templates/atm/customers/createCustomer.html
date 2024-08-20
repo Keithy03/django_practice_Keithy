@@ -14,9 +14,6 @@
                 <div class="card-body">
                     <form action="{% url 'createCustomer' %}" method="post">
                         {% csrf_token %}
-                        <div class="form-group">
-                            {{ form.user_type.label_tag }} {{ form.user_type }}
-                        </div>
 
                         <div class="form-group">
                             {{ form.name.label_tag }} {{ form.name }}
@@ -29,8 +26,10 @@
                         <div class="form-group">
                             {{ form.money.label_tag }} {{ form.money }}
                         </div>
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-success btn-lg"><i class="fa fa-save"></i> Create</button>
+                        <div class="text-center mt-3">
+                            <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Create
+                            </button>
+                            <a href="{% url 'customer' %}" class="btn btn-secondary">Back</a>
                         </div>
                     </form>
                 </div>

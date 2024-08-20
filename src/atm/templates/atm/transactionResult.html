@@ -3,13 +3,24 @@
 {% block title %} ATM {%  endblock %}
 
 {% block content %}
-<div class="container">
-    <h2>Resultado de la transacción</h2>
-    {% if error %}
-    <p class="alert alert-danger">{{ error }}</p>
-    {% else %}
-    <p class="alert alert-success">{{ message }}</p>
-    {% endif %}
-    <a href="{% url 'transaction' %}" class="btn btn-primary">Make another transaction</a>
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0 text-center">Transaction Result</h2>
+        </div>
+        <div class="card-body">
+            {% if error %}
+            <p class="alert alert-danger text-center">{{ error }}</p>
+            {% else %}
+            <p class="alert alert-success text-center">{{ message }}</p>
+            {% endif %}
+            <h2 class="mb-0 text-center"> Your available balance: {{customer.money}}</h2>
+            <div class="text-center mt-4">
+                <a href="{% url 'transaction' %}" class="btn btn-outline-primary btn-lg">
+                    Make another transaction
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

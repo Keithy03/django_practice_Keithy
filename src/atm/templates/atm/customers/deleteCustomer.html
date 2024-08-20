@@ -1,0 +1,18 @@
+{% extends "atm/base.html" %}
+{% load static %}
+{% block title %} ATM {%  endblock %}
+
+{% block content %}
+
+<div class="container mt-5 text-center">
+    <h1>Confirm Deletion</h1>
+    <h2 class="mt-2">Are you sure you want to delete the customer <strong>{{ customer.name }}</strong>?</h2>
+
+    <form action="{% url 'deleteCustomer' customer.id %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger mt-3">Delete</button>
+        <a href="{% url 'customer' %}" class="btn btn-secondary mt-3">Back</a>
+    </form>
+</div>
+
+{% endblock %}

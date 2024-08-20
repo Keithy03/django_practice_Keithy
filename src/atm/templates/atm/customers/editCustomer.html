@@ -16,10 +16,6 @@
                         {% csrf_token %}
 
                         <div class="form-group">
-                            {{ form.user_type.label_tag }} {{ form.user_type }}
-                        </div>
-
-                        <div class="form-group">
                             {{ form.name.label_tag }} {{ form.name }}
                         </div>
 
@@ -27,8 +23,10 @@
                             {{ form.money.label_tag }} {{ form.money }}
                         </div>
 
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-warning btn-lg"><i class="fa fa-save"></i> Save Changes</button>
+                        <div class="text-center  mt-3">
+                            <button type="submit" class="btn btn-warning"><i class="fa fa-save"></i> Save Changes
+                            </button>
+                            <a href="{% url 'customer' %}" class="btn btn-secondary">Back</a>
                         </div>
                     </form>
                 </div>

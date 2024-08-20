@@ -1,6 +1,6 @@
 from pyexpat.errors import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from .form import CustomerForm, LoginForm, TransactionForm
+from .form import CustomerForm, LoginForm, TransactionForm, EditCustomerForm
 from .models import Customer
 
 
@@ -26,7 +26,7 @@ def loginCustomers(request):
 
 
 def indexCustomer(request):
-    customers = Customer.objects.all()
+    customers = Customer.objects.filter(user_type=1)
     return render(request, "atm/customers/crudCustomers.html", {"customers": customers})
 
 
@@ -46,14 +46,25 @@ def editCustomer(request, pk):
     customer = get_object_or_404(Customer, pk=pk)
 
     if request.method == 'POST':
-        form = CustomerForm(request.POST, instance=customer)
+        form = EditCustomerForm(request.POST, instance=customer)
         if form.is_valid():
-            form.save()
+            customer.save()
             return redirect("customer")
     else:
-        form = CustomerForm(instance=customer)
+        # Load data into the form.
+        form = EditCustomerForm(instance=customer)
 
     return render(request, "atm/customers/editCustomer.html", {'form': form, 'customer': customer})
+
+
+def deleteCustomer(request, pk):
+    customer = get_object_or_404(Customer, pk=pk)
+
+    if request.method == 'POST':
+        customer.delete()
+        return redirect("customer")
+
+    return render(request, 'atm/customers/deleteCustomer.html', {'customer': customer})
 
 
 # END CUSTOMERS
@@ -62,33 +73,35 @@ def editCustomer(request, pk):
 # BEGGING TRANSACTION
 
 def transaction(request):
+    #
+    form = TransactionForm()
+
     if request.method == "POST":
         form = TransactionForm(request.POST)
 
         if form.is_valid():
             pin = form.cleaned_data['pin']
             amount = form.cleaned_data['amount']
+
             customer = Customer.objects.filter(pin=pin).first()
 
             if customer:
                 if customer.money >= amount:
-                    bills = calculateBills(amount)
-
-                    if bills:
+                    if calculateBills(amount):
+                        bills = calculateBills(amount)
+                        customer.money -= amount
+                        customer.save()
                         message = generateMessage(bills)
-                        return render(request, "atm/transactionResult.html", {'message': message})
+                        return render(request, "atm/transactionResult.html", {'message': message, 'customer': customer})
                     else:
-                        return render(request, "atm/transactionResult.html",
-                                      {'error': 'Cannot provide the exact amount with available bills.'})
+                        return render(request, "atm/transaction.html",
+                                      {"form": TransactionForm(), 'error': 'Cannot provide the exact amount with available bills.'})
                 else:
-                    return render(request, "atm/transactionResult.html", {'error': 'Insufficient funds.'})
+                    return render(request, "atm/transaction.html", {"form": TransactionForm(), 'error': 'Insufficient funds.'})
             else:
-                return render(request, "atm/transactionResult.html", {'error': 'Invalid PIN.'})
+                return render(request, "atm/transaction.html", {"form": TransactionForm(), 'error': 'Invalid PIN.'})
 
-    else:
-        form = TransactionForm()
-
-    return render(request, "atm/transaction.html", {"form": form})
+    return render(request, "atm/transaction.html", {"form": TransactionForm()})
 
 
 def calculateBills(amount):
@@ -106,7 +119,12 @@ def calculateBills(amount):
         bills[2000] = amount // 2000
         amount %= 2000
 
+    if amount != 0:
+        return None
+
     return bills
+
+
 
 
 def generateMessage(bills):
@@ -114,7 +132,7 @@ def generateMessage(bills):
 
     for denomination, count in bills.items():
         if count > 0:
-            message.append(f"{count} billete{'s' if count > 1 else ''} de {denomination:,} colones")
+            message.append(f"{count} bills of {denomination:,} colones")
 
     return f"Your money is " + ", ".join(message)
 

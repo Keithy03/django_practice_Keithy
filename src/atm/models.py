@@ -14,7 +14,7 @@ class Customer(models.Model):
     money = models.IntegerField()
 
     def __str__(self):
-        return "%s - %s" % (self.name, self.money)
+        return "%s - %s - %s" % (self.name, self.money, self.pin)
 
 
 
