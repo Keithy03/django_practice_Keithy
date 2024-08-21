@@ -1,0 +1,35 @@
+{% extends "atm/base.html" %}
+{% block title %} Logs {%  endblock %}
+
+{% block content %}
+<div class="page-title">
+        <h3 class="text-center">Transaction Logs</h3>
+</div>
+
+<div class="clearfix"></div>
+
+<div class="container">
+    <div class="table-responsive mt-3">
+        <table class="table table-striped table-bordered table-hover" id="customers_table">
+            <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transactionLog in transactionLogs %}
+                <tr>
+                    <td>{{ transactionLog.id }}</td>
+                    <td>{{ transactionLog.customer.name }}</td>
+                    <td>{{ transactionLog.amount }}</td>
+                    <td>{{ transactionLog.date }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,7 +1,8 @@
 from django import forms
+from djgentelella.forms.forms import GTForm
+from djgentelella.widgets import core as genwidgets
 from rest_framework.exceptions import ValidationError
-
-from atm.models import Customer
+from atm.models import Customer, User
 
 
 # TRANSACTION
@@ -13,12 +14,9 @@ class TransactionForm(forms.Form):
 
 
 # Customers
-class LoginForm(forms.Form):
-    name = forms.CharField(max_length=50,
-                           widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your name'}))
-    pin = forms.CharField(max_length=5,
-                          widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Enter your PIN'}))
-
+class LoginForm(GTForm):
+    name = forms.CharField(required=True, label='Username', widget=genwidgets.TextInput())
+    pin = forms.CharField(required=True, label='Password', widget=genwidgets.PasswordInput())
 
 class CustomerForm(forms.ModelForm):
     class Meta:

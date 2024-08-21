@@ -7,6 +7,12 @@
 <link rel="stylesheet" href="{% static 'gentelella/fonts/font-awesome.min.css' %}">
 {% endblock %}
 
+{% block sidebar %}
+<div class="col-md-3 left_col {% block sidebar_class %} {% endblock sidebar_class %}">
+    {% include "atm/sidebar.html" %}
+</div>
+{% endblock sidebar %}
+
 {% block content_block_wrap %}
 <div class="card">
     <div class="card-body">

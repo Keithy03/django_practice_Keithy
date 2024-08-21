@@ -3,16 +3,22 @@
 {% block title %} Customers {%  endblock %}
 
 {% block content %}
+<div class="page-title">
+        <h3 class="text-center">Edit Customer</h3>
+</div>
+
+<div class="clearfix"></div>
 
 <div class="container mt-4">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header bg-warning text-white">
-                    <h4 class="card-title text-center mb-0"><i class="fa fa-edit"></i> Edit Customer</h4>
+        <div class="col-md-6">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2 class="text-center"><i class="fa fa-edit"></i> Edit Information</h2>
+                    <div class="clearfix"></div>
                 </div>
-                <div class="card-body">
-                    <form action="{% url 'editCustomer' customer.id %}" method="post">
+                <div class="x_content">
+                    <form action="{% url 'atm:editCustomer' customer.id %}" method="post">
                         {% csrf_token %}
 
                         <div class="form-group">
@@ -23,10 +29,11 @@
                             {{ form.money.label_tag }} {{ form.money }}
                         </div>
 
-                        <div class="text-center  mt-3">
-                            <button type="submit" class="btn btn-warning"><i class="fa fa-save"></i> Save Changes
-                            </button>
-                            <a href="{% url 'customer' %}" class="btn btn-secondary">Back</a>
+                        <div class="ln_solid"></div>
+
+                        <div class="text-center mt-3">
+                                <a href="{% url 'atm:customer' %}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i> Back</a>
+                            <button type="submit" class="btn btn-warning"><i class="fa fa-save"></i> Save</button>
                         </div>
                     </form>
                 </div>
@@ -34,6 +41,4 @@
         </div>
     </div>
 </div>
-
-
 {% endblock %}

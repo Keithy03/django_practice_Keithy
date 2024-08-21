@@ -1,26 +1,32 @@
 {% extends "atm/base.html" %}
-{% load static %}
 {% block title %} Login Customers {%  endblock %}
 
 {% block content %}
-
+<div class="page-title">
+        <h3 class="text-center">Login</h3>
+</div>
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="card-title text-center mb-0">Login</h4>
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2 class="text-center">Login</h2>
+                    <div class="clearfix"></div>
                 </div>
-                <div class="card-body">
-                    <form action="{% url 'loginCustomer' %}" method="post">
+                <div class="x_content">
+                    <form action="{% url 'atm:loginCustomer' %}" method="post">
+                        {% if messages %}
+                        <ul class="messages">
+                            {% for message in messages %}
+                            <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
                         {% csrf_token %}
                         {{ form }}
 
                         <div class="container text-center mt-3">
                             <button type="submit" class="btn btn-primary">Login</button>
-                            <a href="{% url 'index' %}" class="btn btn-success">
-                                <i class="fa fa-home"></i> Home Page
-                            </a>
                         </div>
                     </form>
                 </div>
@@ -28,5 +34,7 @@
         </div>
     </div>
 </div>
+
+
 
 {% endblock %}

@@ -1,24 +1,19 @@
 {% extends "atm/base.html" %}
-{% load static %}
 {% block title %} ATM {%  endblock %}
 
 {% block content %}
-
-<h1 class="text-center">ATM</h1>
+<div class="page-title">
+        <h3 class="text-center">ATM</h3>
+</div>
 
 <div class="container">
-    <div class="row mt-5">
-        <a href="{% url 'index' %}" class="btn btn-success mb-3">
-            <i class="fa fa-home"></i> Home Page
-        </a>
-    </div>
-
     <div class="container mt-4">
         <div class="row justify-content-center">
             <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h4 class="card-title mb-0 text-center">Withdraw Money</h4>
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2 class="text-center">Withdraw Money</h2>
+                        <div class="clearfix"></div>
                     </div>
 
                     {% if error %}
@@ -31,8 +26,8 @@
                     </div>
                     {% endif %}
 
-                    <div class="card-body">
-                        <form action="{% url 'transaction' %}" method="post">
+                    <div class="x_content">
+                        <form action="{% url 'atm:index' %}" method="post">
                             {% csrf_token %}
                             {{form}}
                             <div class="text-center mt-3">
@@ -47,6 +42,5 @@
         </div>
     </div>
 </div>
-
 {% endblock %}
 

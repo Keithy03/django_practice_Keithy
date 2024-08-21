@@ -1,18 +1,19 @@
 from django.urls import path
 
-from atm.views import inicio, indexCustomer, createCustomer, editCustomer, loginCustomers, transaction, deleteCustomer
+from atm.views import indexCustomer, createCustomer, editCustomer, transaction, deleteCustomer, \
+    loginOffice, logoutOffice, viewTransactionLogs
 
+app_name= 'atm'
 urlpatterns = [
-    path('', inicio, name="index"),
+    # Transaction
+    path('', transaction, name="index"),
+    path('transaction', transaction, name="transaction"),
+    path('transactionLogs', viewTransactionLogs, name="transactionLog"),
 
     # Customers
-    path('login', loginCustomers, name="loginCustomer"),
     path('customers/', indexCustomer, name="customer"),
     path('customers/create', createCustomer, name="createCustomer"),
     path('customers/edit/<int:pk>', editCustomer, name="editCustomer"),
     path('customers/delete/<int:pk>', deleteCustomer, name="deleteCustomer"),
-
-    # Transaction
-    path('transaction/', transaction, name="transaction"),
 
 ]
