@@ -1,13 +1,11 @@
 from pyexpat.errors import messages
 
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render, redirect, get_object_or_404
-from .form import CustomerForm, LoginForm, TransactionForm, EditCustomerForm
-from .models import Customer, TransactionLog
 
-
-# BEGGING CUSTOMERS
+from .form import LoginForm, TransactionForm, CLientForm, AccountForm
+from .models import Client, Account, TransactionLog
 
 
 def loginOffice(request):
@@ -19,65 +17,110 @@ def loginOffice(request):
         else:
             messages.error(request, 'Username and password did not match')
             form = LoginForm().as_grid()
-            return render(request, 'atm/customers/loginCustomers.html', {'form': form})
+            return render(request, 'atm/client/loginCustomers.html', {'form': form})
     else:
         form = LoginForm().as_grid()
-        return render(request, 'atm/customers/loginCustomers.html', {'form': form})
+        return render(request, 'atm/client/loginCustomers.html', {'form': form})
 
-
+# ****    BEGGING CLIENTS    ****
 def logoutOffice(request):
     logout(request)
     return redirect('atm:index')
 
 
 @permission_required('atm.can_manage_client')
-def indexCustomer(request):
-    customers = Customer.objects.all()
-    return render(request, "atm/customers/customersList.html", {"customers": customers})
+def indexClients(request):
+    clients = Client.objects.all()
+    return render(request, "atm/client/client_list.html", {"clients": clients})
 
 
 @permission_required('atm.can_manage_client')
-def createCustomer(request):
-    form = CustomerForm()
+def createClient(request):
+    form = CLientForm()
 
     if request.method == "POST":
-        form = CustomerForm(request.POST)
+        form = CLientForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect("atm:customer")
-    return render(request, "atm/customers/createCustomer.html", {"form": form})
-
+            # message = "A client was successfully created"
+            return redirect("atm:clients")
+    return render(request, "atm/client/create_client.html", {"form": form})
 
 @permission_required('atm.can_manage_client')
-def editCustomer(request, pk):
-    customer = get_object_or_404(Customer, pk=pk)
+def editClient(request, pk):
+    client = get_object_or_404(Client, pk=pk)
 
     if request.method == 'POST':
-        form = EditCustomerForm(request.POST, instance=customer)
+        form = CLientForm(request.POST, instance=client)
         if form.is_valid():
-            customer.save()
-            return redirect("atm:customer")
+            client.save()
+            return redirect("atm:clients")
     else:
         # Load data into the form.
-        form = EditCustomerForm(instance=customer)
+        form = CLientForm(instance=client)
 
-    return render(request, "atm/customers/editCustomer.html", {'form': form, 'customer': customer})
+    return render(request, "atm/client/edit_client.html", {'form': form, 'client': client})
+
+@permission_required('atm.can_manage_client')
+def deleteClient(request, pk):
+    client = get_object_or_404(Client, pk=pk)
+
+    if request.method == 'POST':
+        client.delete()
+        return redirect("atm:clients")
+
+    return render(request, 'atm/client/delete_client.html', {'client': client})
+# ****    END CLIENTS    ****
+
+
+# ****    BEGGING ACCOUNTS    ****
+@permission_required('atm.can_manage_client')
+def indexAccounts(request):
+    accounts = Account.objects.all()
+    return render(request, "atm/client/account/account_list.html", {"accounts": accounts})
+
+@permission_required('atm.can_manage_client')
+def createAccount(request):
+    form = AccountForm()
+    if request.method == "POST":
+        form = AccountForm(request.POST)
+        if form.is_valid():
+            form.save()
+            # message = "A client was successfully created"
+            return redirect("atm:accounts")
+    return render(request, "atm/client/account/create_account.html", {"form": form})
 
 
 @permission_required('atm.can_manage_client')
-def deleteCustomer(request, pk):
-    customer = get_object_or_404(Customer, pk=pk)
+def editAccount(request, pk):
+    account = get_object_or_404(Account, pk=pk)
 
     if request.method == 'POST':
-        customer.delete()
-        return redirect("atm:customer")
+        form = AccountForm(request.POST, instance=account)
+        if form.is_valid():
+            account.save()
+            return redirect("atm:accounts")
+    else:
+        # Load data into the form.
+        form = AccountForm(instance=account)
 
-    return render(request, 'atm/customers/deleteCustomer.html', {'customer': customer})
-
-# END CUSTOMERS
+    return render(request, "atm/client/account/edit_account.html", {'form': form, 'account': account})
 
 
-# BEGGING TRANSACTION
+@permission_required('atm.can_manage_client')
+def deleteAccount(request, pk):
+    account = get_object_or_404(Account, pk=pk)
+
+    if request.method == 'POST':
+        account.delete()
+        return redirect("atm:accounts")
+
+    return render(request, 'atm/client/account/delete_account.html', {'account': account})
+
+# ****    END ACCOUNTS    ****
+
+
+# ****    BEGGING TRANSACTION    ****
 def transaction(request):
     if request.method == "POST":
         form = TransactionForm(request.POST)
@@ -85,20 +128,21 @@ def transaction(request):
         if form.is_valid():
             pin = form.cleaned_data['pin']
             amount = form.cleaned_data['amount']
-            customer = Customer.objects.filter(pin=pin).first()
-            if customer:
-                if customer.money >= amount:
+            account = Account.objects.filter(pin=pin).first()
+            if account:
+                if account.money >= amount:
                     if calculateBills(amount):
                         bills = calculateBills(amount)
-                        customer.money -= amount
-                        customer.save()
+                        account.money -= amount
+                        account.save()
                         newTransaction = TransactionLog.objects.create(
-                            customer = customer,
-                            amount = amount
+                            account = account,
+                            amount = amount,
+                            type = 'Money withdrawal'
                         )
 
                         message = generateMessage(bills)
-                        return render(request, "atm/transactionResult.html", {'message': message, 'customer': customer})
+                        return render(request, "atm/transaction_result.html", {'message': message, 'account': account})
                     else:
                         return render(request, "atm/transaction.html",
                                       {"form": TransactionForm(),
@@ -146,6 +190,6 @@ def generateMessage(bills):
 @permission_required('atm.can_manage_client')
 def viewTransactionLogs(request):
     transactionLogs = TransactionLog.objects.all()
-    return render(request, "atm/transactionLogs.html", {'transactionLogs': transactionLogs})
+    return render(request, "atm/transaction_logs.html", {'transactionLogs': transactionLogs})
 
 # END TRANSACTION

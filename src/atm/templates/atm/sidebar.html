@@ -14,7 +14,21 @@
             <ul class="nav side-menu">
                 {% if user.is_authenticated %}
                 <li>
-                    <a href="{% url 'atm:customer' %}" class="nav-link">Manage Clients</a>
+                    <a>
+                        Manage Clients
+                        <span class="fa fa-chevron-down"></span>
+                    </a>
+                    <ul class="nav child_menu">
+                        <li>
+                            <a href="{% url 'atm:clients' %}" class="nav-link">Clients List</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'atm:accounts' %}" class="nav-link">
+                                Clients Accounts
+                            </a>
+                        </li>
+                    </ul>
+
                 </li>
 
                 <li>
@@ -34,8 +48,8 @@
         <div class="sidebar-footer hidden-print nohidden">
             {% if user.is_authenticated %}
             <form action="{% url 'logout'%}" method="post">
-                    {% csrf_token %}
-                 <button class="btn btn-outline-secondary">
+                {% csrf_token %}
+                <button class="btn btn-outline-secondary">
                     <span class="fa fa-sign-out" aria-hidden="true"> Logout </span>
                 </button>
             </form>

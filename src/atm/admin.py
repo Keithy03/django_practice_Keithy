@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from atm.models import Customer, TransactionLog, User
+from atm.models import OfficeUser, Client, Customer
 
+admin.site.register(OfficeUser)
+admin.site.register(Client)
 admin.site.register(Customer)
-admin.site.register(User)
-admin.site.register(TransactionLog)

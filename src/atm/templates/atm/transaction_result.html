@@ -23,7 +23,7 @@
             {% else %}
             <p class="alert alert-success text-center">{{ message }}</p>
             {% endif %}
-            <h2 class="mb-0 text-center">Your available balance: {{ customer.money }}</h2>
+            <h2 class="mb-0 text-center">Your available balance: {{ account.money }}</h2>
             <div class="text-center mt-4">
                 <a href="{% url 'atm:index' %}" class="btn btn-outline-primary btn-lg">
                     Make another transaction

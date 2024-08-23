@@ -16,6 +16,7 @@
                     <th>ID</th>
                     <th>Name</th>
                     <th>Amount</th>
+                    <th>Type</th>
                     <th>Date</th>
                 </tr>
             </thead>
@@ -23,8 +24,9 @@
                 {% for transactionLog in transactionLogs %}
                 <tr>
                     <td>{{ transactionLog.id }}</td>
-                    <td>{{ transactionLog.customer.name }}</td>
+                    <td>{{ transactionLog.account.client.name }}</td>
                     <td>{{ transactionLog.amount }}</td>
+                    <td>{{ transactionLog.type }}</td>
                     <td>{{ transactionLog.date }}</td>
                 </tr>
                 {% endfor %}

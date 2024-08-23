@@ -1,10 +1,10 @@
 {% extends "atm/base.html" %}
 {% load static %}
-{% block title %} Customers {%  endblock %}
+{% block title %} Account {%  endblock %}
 
 {% block content %}
 <div class="page-title mb-2">
-    <h3 class="text-center">Create New Customer</h3>
+    <h3 class="text-center">Create New Client Account</h3>
 </div>
 
 <div class="clearfix"></div>
@@ -18,25 +18,15 @@
                     <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                    <form action="{% url 'atm:createCustomer' %}" method="post">
+                    <form action="{% url 'atm:createAccount' %}" method="post">
                         {% csrf_token %}
 
-                        <div class="form-group">
-                            {{ form.name.label_tag }} {{ form.name }}
-                        </div>
-
-                        <div class="form-group">
-                            {{ form.pin.label_tag }} {{ form.pin }}
-                        </div>
-
-                        <div class="form-group">
-                            {{ form.money.label_tag }} {{ form.money }}
-                        </div>
+                        {{ form }}
 
                         <div class="ln_solid"></div>
 
                         <div class="text-center mt-3">
-                            <a href="{% url 'atm:customer' %}" class="btn btn-secondary"><i
+                            <a href="{% url 'atm:accounts' %}" class="btn btn-secondary"><i
                                     class="fa fa-arrow-left"></i> Back</a>
                             <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Create</button>
                         </div>

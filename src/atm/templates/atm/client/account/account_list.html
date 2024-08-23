@@ -1,0 +1,57 @@
+{% extends "atm/base.html" %}
+{% load static %}
+{% block title %} Accounts {%  endblock %}
+
+{% block content %}
+<div class="page-title">
+    <h3 class="text-center">Manage Accounts</h3>
+</div>
+
+<div class="clearfix"></div>
+
+<div class="container">
+    <div class="row mt-3">
+        <div class="col text-center">
+            <a href="{% url 'atm:createAccount' %}" class="btn btn-success mb-3">
+                <i class="fa fa-plus"></i> Add New
+            </a>
+        </div>
+    </div>
+
+    {% if message %}
+    <div class="alert alert-success text-center mt-4">
+        <i class="fa fa-check-circle"></i> {{ message }}
+    </div>
+    {% endif %}
+
+    <div class="table-responsive mt-3">
+        <table class="table table-striped table-bordered table-hover" id="customers_table">
+            <thead class="thead-dark">
+            <tr>
+                <th>CLient Name</th>
+                <th>Email</th>
+                <th>Amount</th>
+                <th class="text-center">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for account in accounts %}
+            <tr>
+                <td>{{ account.client.name }}</td>
+                <td>{{ account.client.email }}</td>
+                <td>{{ account.money }}</td>
+                <td class="text-center">
+                    <a href="{% url 'atm:editAccount' account.pk %}" class="btn btn-warning btn-sm" title="Edit">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                    <a href="{% url 'atm:deleteAccount' account.id %}" class="btn btn-danger btn-sm" title="Delete">
+                        <i class="fa fa-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
