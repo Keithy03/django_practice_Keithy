@@ -2,12 +2,16 @@ from pyexpat.errors import messages
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
 from .form import LoginForm, TransactionForm, CLientForm, AccountForm
 from .models import Client, Account, TransactionLog
 
 
+# ****    EXAMPLE LOGIN    ****
 def loginOffice(request):
     if request.method == 'POST':
         user = authenticate(request, username=request.POST['name'], password=request.POST['pin'])
@@ -22,17 +26,49 @@ def loginOffice(request):
         form = LoginForm().as_grid()
         return render(request, 'atm/client/loginCustomers.html', {'form': form})
 
-# ****    BEGGING CLIENTS    ****
 def logoutOffice(request):
     logout(request)
     return redirect('atm:index')
 
 
+# ****    BEGGING CLIENTS    ****
+# ****    WITH GENERIC VIEWS    ****
+
+# It is used to give you specific permission.
+class ClientListView(PermissionRequiredMixin, ListView):
+    model = Client
+    template_name = 'atm/client/client_list.html'
+    queryset = Client.objects.all()
+    context_object_name = 'clients'
+    permission_required = 'atm.can_manage_client'
+
+
+class CreateClientView(PermissionRequiredMixin, CreateView):
+    form_class = CLientForm
+    template_name = 'atm/client/create_client.html'
+    success_url = reverse_lazy('atm:clients')
+    permission_required = 'atm.can_manage_client'
+
+
+class EditClientView(PermissionRequiredMixin, UpdateView):
+    model = Client
+    form_class = CLientForm
+    template_name = 'atm/client/edit_client.html'
+    success_url = reverse_lazy('atm:clients')
+    permission_required = 'atm.can_manage_client'
+
+class DeleteClientView(PermissionRequiredMixin, DeleteView):
+    model = Client
+    template_name = 'atm/client/delete_client.html'
+    success_url = reverse_lazy('atm:clients')
+    permission_required = 'atm.can_manage_client'
+# ****    END WITH GENERIC VIEWS    ****
+
+# ****    EXAMPLE WITHOUT GENERIC VIEWS    ****
 @permission_required('atm.can_manage_client')
 def indexClients(request):
     clients = Client.objects.all()
     return render(request, "atm/client/client_list.html", {"clients": clients})
-
 
 @permission_required('atm.can_manage_client')
 def createClient(request):
@@ -74,49 +110,31 @@ def deleteClient(request, pk):
 
 
 # ****    BEGGING ACCOUNTS    ****
-@permission_required('atm.can_manage_client')
-def indexAccounts(request):
-    accounts = Account.objects.all()
-    return render(request, "atm/client/account/account_list.html", {"accounts": accounts})
+class AccountListView(PermissionRequiredMixin, ListView):
+    model = Account
+    template_name = 'atm/account/account_list.html'
+    queryset = Account.objects.all()
+    context_object_name = 'accounts'
+    permission_required = 'atm.can_manage_client'
 
-@permission_required('atm.can_manage_client')
-def createAccount(request):
-    form = AccountForm()
-    if request.method == "POST":
-        form = AccountForm(request.POST)
-        if form.is_valid():
-            form.save()
-            # message = "A client was successfully created"
-            return redirect("atm:accounts")
-    return render(request, "atm/client/account/create_account.html", {"form": form})
+class CreateAccountView(PermissionRequiredMixin, CreateView):
+    form_class = AccountForm
+    template_name = 'atm/account/create_account.html'
+    success_url = reverse_lazy('atm:accounts')
+    permission_required = 'atm.can_manage_client'
 
+class EditAccountView(PermissionRequiredMixin, UpdateView):
+    model = Account
+    form_class = AccountForm
+    template_name = 'atm/account/edit_account.html'
+    success_url = reverse_lazy('atm:accounts')
+    permission_required = 'atm.can_manage_client'
 
-@permission_required('atm.can_manage_client')
-def editAccount(request, pk):
-    account = get_object_or_404(Account, pk=pk)
-
-    if request.method == 'POST':
-        form = AccountForm(request.POST, instance=account)
-        if form.is_valid():
-            account.save()
-            return redirect("atm:accounts")
-    else:
-        # Load data into the form.
-        form = AccountForm(instance=account)
-
-    return render(request, "atm/client/account/edit_account.html", {'form': form, 'account': account})
-
-
-@permission_required('atm.can_manage_client')
-def deleteAccount(request, pk):
-    account = get_object_or_404(Account, pk=pk)
-
-    if request.method == 'POST':
-        account.delete()
-        return redirect("atm:accounts")
-
-    return render(request, 'atm/client/account/delete_account.html', {'account': account})
-
+class DeleteAccountView(PermissionRequiredMixin, DeleteView):
+    model = Account
+    template_name = 'atm/account/delete_account.html'
+    success_url = reverse_lazy('atm:accounts')
+    permission_required = 'atm.can_manage_client'
 # ****    END ACCOUNTS    ****
 
 
@@ -136,9 +154,9 @@ def transaction(request):
                         account.money -= amount
                         account.save()
                         newTransaction = TransactionLog.objects.create(
-                            account = account,
-                            amount = amount,
-                            type = 'Money withdrawal'
+                            account=account,
+                            amount=amount,
+                            type='Money withdrawal'
                         )
 
                         message = generateMessage(bills)
@@ -187,9 +205,10 @@ def generateMessage(bills):
     return f"Your money is " + ", ".join(message)
 
 
-@permission_required('atm.can_manage_client')
-def viewTransactionLogs(request):
-    transactionLogs = TransactionLog.objects.all()
-    return render(request, "atm/transaction_logs.html", {'transactionLogs': transactionLogs})
-
+class TransactionLogListView(PermissionRequiredMixin, ListView):
+    model = TransactionLog
+    template_name = 'atm/transaction_logs.html'
+    queryset = TransactionLog.objects.all()
+    context_object_name = 'transactionLogs'
+    permission_required = 'atm.can_manage_client'
 # END TRANSACTION
