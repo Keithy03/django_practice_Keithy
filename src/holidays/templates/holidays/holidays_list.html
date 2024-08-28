@@ -1,0 +1,84 @@
+{% extends "holidays/base.html" %}
+{% block title %} HOLIDAYS {%  endblock %}
+
+{% block content %}
+<div class="page-title">
+    <h3 class="text-center">Prueba</h3>
+</div>
+<div class="row">
+    <table class="table table-striped w-100 table-responsive" id="holidays_table"></table>
+</div>
+
+{% url "laboratory:api-holiday-list" org_pk lab_pk as list_obj_url %}
+{% include 'gentelella/blocks/modal_template.html' with form=create_form id="create_obj_modal" title="Create Holiday" form_id="create_obj_form" url=list_obj_url %}
+
+{% url "laboratory:api-holiday-detail" org_pk lab_pk 0 as detail_obj_url %}
+{% include 'gentelella/blocks/modal_template.html' with form=update_form id="update_obj_modal" title="Update Holiday" form_id="update_obj_form" url=detail_obj_url %}
+
+{% include 'gentelella/blocks/modal_template_delete.html' with form=delete_form id="delete_obj_modal" form_id="delete_obj_form" url=detail_obj_url %}
+
+{% endblock %}
+
+
+{% block js %}
+{{block.super}}
+<script>
+    var object_urls = {
+        list_url: "{% url 'holiday:api-holiday-list' %}",
+        create_url: "{% url 'holiday:api-holiday-list' %}",
+        destroy_url: "{% url 'holiday:api-holiday-detail' 0 %}",
+        update_url: "{% url 'holiday:api-holiday-detail' 0 %}"
+    }
+
+    datatable_inits = {
+        columns: [
+            {data: "id", name: "id", title: "ID", type: "string", visible: false},
+            {data: "name", name: "nombre", title: "Nombre", type: "string", visible: true},
+            {data: "date", name: "date", title: "Date", type:"date", "dateformat": document.date_format, visible: true},
+            {data: "country", name: "country", title: "Country", type: "string", visible: true},
+            {data: "actions", name: "actions", title: "Actions", type: "string", visible: true},
+        ],
+        addfilter: true
+    }
+
+    var holiday_modalids = {
+        create: "#create_obj_modal",
+        destroy: "#delete_obj_modal",
+        update: "#update_obj_modal"
+    }
+
+    var holiday_actions = {
+        table_actions: [],
+        object_actions: [],
+        title: gettext('Actions'),
+        className: "no-export-col"
+    }
+
+    icons = {
+        create: '<i class="fa fa-plus" aria-hidden="true"></i>',
+        clear: '<i class="fa fa-eraser" aria-hidden="true"></i>',
+        detail: 'fa fa-eye',
+        update: 'fa fa-edit me-1 fa-lg',
+        destroy: 'fa fa-trash fa-lg'
+    }
+
+    let objconfig = {
+        urls: object_urls,
+        datatable_element: "#holidays_table",
+        modal_ids: holiday_modalids,
+        actions: holiday_actions,
+        datatable_inits: datatable_inits,
+        add_filter: true,
+        relation_render: {'field_autocomplete': 'text' },
+        delete_display: data => data['name'],
+        create: "btn-success",
+        icons: icons
+    }
+
+    let ocrud = ObjectCRUD("holidaycrudobj", objconfig);
+    ocrud.init();
+</script>
+
+{%  endblock %}
+
+

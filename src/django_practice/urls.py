@@ -19,8 +19,9 @@ from django.urls import path, include, reverse_lazy
 from django.views.generic import RedirectView
 from djgentelella.urls import urlpatterns as urls_djgentelella
 
-urlpatterns = urls_djgentelella +[
+urlpatterns = urls_djgentelella + [
     path('admin/', admin.site.urls),
     path('', RedirectView.as_view(url=reverse_lazy('index')), name='home'),
-    path('atm/', include("atm.urls"))
+    path('atm/', include("atm.urls")),
+    path('holidays/', include("holidays.urls")),
 ]

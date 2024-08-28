@@ -1,0 +1,32 @@
+{% extends "holidays/base.html" %}
+{% block title %} HOLIDAYS {%  endblock %}
+
+{% block content %}
+<div class="page-title">
+        <h3 class="text-center">Prueba</h3>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <td>Name</td>
+        <td>Date</td>
+        <td>Country</td>
+    </tr>
+    </thead>
+
+    <tbody>
+    {% for holiday in holidays_data %}
+    <tr>
+        <td>{{ holiday.name }}</td>
+        <td>{{ holiday.date }}</td>
+        <td>{{ holiday.countryCode }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
+
+
+
