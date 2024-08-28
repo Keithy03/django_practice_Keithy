@@ -14,5 +14,6 @@ urlpatterns = [
     path('api/', include(objectrouter.urls)),
 
 
+    # TEST
     path('verAPI', get_api, name="consumoApi"),
 ]
